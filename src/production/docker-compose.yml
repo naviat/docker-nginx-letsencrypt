@@ -1,0 +1,24 @@
+version: '3.1'
+
+services:
+
+  production-nginx-container:
+    container_name: 'production-nginx-container'
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./production.conf:/etc/nginx/conf.d/default.conf
+      - ./production-site:/usr/share/nginx/html
+      - ./dh-param/dhparam-2048.pem:/etc/ssl/certs/dhparam-2048.pem
+      - /docker-volumes/etc/letsencrypt/live/haidv.online/fullchain.pem:/etc/letsencrypt/live/haidv.online/fullchain.pem
+      - /docker-volumes/etc/letsencrypt/live/haidv.online/privkey.pem:/etc/letsencrypt/live/haidv.online/privkey.pem
+      #for certbot challenges
+      - /docker-volumes/data/letsencrypt:/data/letsencrypt
+    networks:
+      - docker-network
+
+networks:
+  docker-network:
+    driver: bridge
