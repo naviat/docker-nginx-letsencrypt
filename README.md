@@ -168,7 +168,7 @@ server {
     return 301 https://www.haidv.online$request_uri;
 }
 
-#https://www.ohhaithere.com
+#https://www.haidv.online
 server {
     server_name www.haidv.online;
     listen 443 ssl http2;
@@ -201,10 +201,37 @@ server {
         add_header X-Content-Type-Options "nosniff" always;
         add_header X-Frame-Options "DENY" always;
         #CSP
-        add_header Content-Security-Policy "frame-src 'self'; default-src 'self'; script-src 'self' 'unsafe-inline' https://maxcdn.bootstrapcdn.com https://ajax.googleapis.com; img-src 'self'; style-src 'self' https://maxcdn.bootstrapcdn.com; font-src 'self' data: https://maxcdn.bootstrapcdn.com; form-action 'self'; upgrade-insecure-requests;" always;
+        add_header Content-Security-Policy "frame-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com https://platform.twitter.com; child-src https://plusone.google.com https://facebook.com https://platform.twitter.com; img-src 'self'; form-action 'self'; upgrade-insecure-requests;" always;        
         add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+        #Feature-policy - Update future
+        #add_header Feature-Policy "geolocation none;midi none;notifications none;push none;sync-xhr none;microphone none;camera none;magnetometer none;gyroscope none;speaker self;vibrate none;fullscreen self;payment none;";
+    }
+    # . files
+    location ~ /\.(?!well-known) {
+        deny all;
     }
 
+    # assets, media
+    location ~* \.(?:css(\.map)?|js(\.map)?|jpe?g|png|gif|ico|cur|heic|webp|tiff?|mp3|m4a|aac|ogg|midi?|wav|mp4|mov|webm|mpe?g|avi|ogv|flv|wmv)$ {
+        expires 7d;
+        access_log off;
+    }
+
+    # svg, fonts
+    location ~* \.(?:svgz?|ttf|ttc|otf|eot|woff2?)$ {
+        add_header Access-Control-Allow-Origin "*";
+        expires 7d;
+        access_log off;
+    }
+
+    # gzip
+    gzip on;
+    gzip_vary on;
+    gzip_proxied any;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/xml application/json application/javascript application/xml+rss application/atom+xml image/svg+xml;
+
+    #ROOT
     root /usr/share/nginx/html;
     index index.html;
 }
